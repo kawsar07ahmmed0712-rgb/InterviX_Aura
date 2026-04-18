@@ -1,0 +1,20 @@
+Role: {{role}}
+Difficulty: {{difficulty}}
+Interview type: {{interview_type}}
+Company style: {{company_style}}
+Language: {{language}}
+Question number: {{question_number}} of {{total_questions}}
+Current focus label: {{focus_label}}
+Mode: {{mode}}
+Repeated weak areas so far: {{repeated_weaknesses}}
+
+Role-specific question seeds:
+{{question_seeds}}
+
+Transcript so far:
+{{transcript}}
+
+Previous feedback:
+{{previous_feedback}}
+
+Return only the next interview question.

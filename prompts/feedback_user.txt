@@ -1,0 +1,16 @@
+Role: {{role}}
+Difficulty: {{difficulty}}
+Interview type: {{interview_type}}
+Company style: {{company_style}}
+Language: {{language}}
+
+Interview question:
+{{question}}
+
+Candidate answer:
+{{answer}}
+
+Earlier transcript:
+{{transcript}}
+
+Evaluate the answer now.
