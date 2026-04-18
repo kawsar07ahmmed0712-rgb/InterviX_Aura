@@ -1,0 +1,16 @@
+autogen-agentchat==0.5.7
+autogen-core==0.5.7
+autogen-ext[ollama]==0.5.7
+autogen-ext[openai]==0.5.7
+fastapi
+httpx
+jinja2
+openai
+pydantic
+pydantic-settings
+pytest
+python-dotenv
+tiktoken
+uvicorn
+google-generativeai
+google-genai
