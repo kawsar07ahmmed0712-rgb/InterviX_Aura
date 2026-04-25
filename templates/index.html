@@ -1,380 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InterviX Aura</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>AI Interview Practice</title>
+
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="/static/app.js" defer></script>
 </head>
-<body data-theme="light" data-view="live">
-    <div class="page-glow glow-a"></div>
-    <div class="page-glow glow-b"></div>
+<body>
+  <main class="page">
+    <section class="panel">
+      <div class="header">
+        <div>
+          <p class="eyebrow">AI Interview Practice</p>
+          <h1>Mock Interview Agent</h1>
+          <p class="subtitle">
+            Practice with Gemini 2.5 or local Ollama models.
+          </p>
+        </div>
+      </div>
 
-    <div class="app-shell">
-        <header class="app-header">
-            <div class="brand-block">
-                <div class="brand-mark">IA</div>
-                <div>
-                    <p class="brand-label">InterviX Aura</p>
-                    <h1>Focused mock interviews with a cleaner live flow.</h1>
-                </div>
-            </div>
+      <form id="setupForm" class="setup">
+        <label>
+          Job position
+          <input
+            id="positionInput"
+            type="text"
+            value="AI Engineer"
+            placeholder="Example: AI Engineer"
+          />
+        </label>
 
-            <div class="app-header-tools">
-                <div class="tab-group" role="tablist" aria-label="Main views">
-                    <button class="tab-button is-active" type="button" data-view="live" aria-selected="true">Live</button>
-                    <button class="tab-button" type="button" data-view="summary" aria-selected="false">Summary</button>
-                    <button class="tab-button" type="button" data-view="history" aria-selected="false">History</button>
-                </div>
+        <label>
+          Provider
+          <select id="providerSelect">
+            <option value="gemini" selected>Gemini</option>
+            <option value="ollama">Ollama</option>
+          </select>
+        </label>
 
-                <div class="header-actions">
-                    <button id="themeToggleBtn" class="ghost-button compact-button" type="button" aria-label="Toggle dark mode">Theme</button>
-                    <button id="sidebarToggleBtn" class="ghost-button compact-button" type="button" aria-label="Toggle sidebar">Sidebar</button>
-                    <button id="exportTxtBtn" class="ghost-button compact-button" type="button">TXT</button>
-                    <button id="exportJsonBtn" class="ghost-button compact-button" type="button">JSON</button>
-                    <button id="exportPdfBtn" class="ghost-button compact-button" type="button">PDF</button>
-                </div>
-            </div>
-        </header>
+        <label>
+          Model
+          <select id="modelSelect"></select>
+        </label>
 
-        <section class="setup-ribbon" aria-label="Interview setup">
-            <div class="setup-primary">
-                <label class="field role-field">
-                    <span>Target role</span>
-                    <input type="text" id="jobRole" placeholder="Frontend Developer" value="AI Engineer" maxlength="60" aria-label="Target role">
-                </label>
+        <button id="startBtn" type="submit">Start Interview</button>
+        <button id="stopBtn" type="button" disabled>Stop</button>
+      </form>
 
-                <label class="field compact-field">
-                    <span>Difficulty</span>
-                    <select id="difficultySelect" aria-label="Interview difficulty">
-                        <option value="beginner">Beginner</option>
-                        <option value="mid" selected>Mid</option>
-                        <option value="senior">Senior</option>
-                    </select>
-                </label>
+      <section id="chatBox" class="chat-box">
+        <div class="empty-state">
+          Select provider/model and start the interview.
+        </div>
+      </section>
 
-                <label class="field compact-field">
-                    <span>Interview type</span>
-                    <select id="interviewTypeSelect" aria-label="Interview type">
-                        <option value="mixed" selected>Mixed</option>
-                        <option value="technical">Technical</option>
-                        <option value="hr">HR</option>
-                        <option value="behavioral">Behavioral</option>
-                        <option value="system_design">System Design</option>
-                    </select>
-                </label>
-
-                <label class="field compact-field">
-                    <span>Questions</span>
-                    <select id="questionCountSelect" aria-label="Question count">
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4" selected>4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                    </select>
-                </label>
-
-                <button id="startBtn" class="primary-button start-button" type="button">Start Interview</button>
-            </div>
-
-            <div class="setup-secondary">
-                <div class="preset-block">
-                    <p class="section-kicker">Try a role</p>
-                    <div class="preset-grid" aria-label="Example roles">
-                        <button class="preset-chip" type="button" data-role="AI Engineer">AI Engineer</button>
-                        <button class="preset-chip" type="button" data-role="Frontend Developer">Frontend Developer</button>
-                        <button class="preset-chip" type="button" data-role="Product Manager">Product Manager</button>
-                        <button class="preset-chip" type="button" data-role="Data Analyst">Data Analyst</button>
-                        <button class="preset-chip" type="button" data-role="Backend Engineer">Backend Engineer</button>
-                    </div>
-                </div>
-
-                <div class="setup-meta">
-                    <div class="meta-chip">
-                        <span class="meta-label">Estimated length</span>
-                        <strong id="sessionLength">~18 min</strong>
-                    </div>
-                    <div class="meta-chip meta-chip-wide">
-                        <span class="meta-label">Plan preview</span>
-                        <strong id="planPreview">Core Depth / Execution / Trade-offs / Growth</strong>
-                    </div>
-                </div>
-            </div>
-
-            <details id="setupAdvanced" class="setup-advanced">
-                <summary>More options</summary>
-                <div class="advanced-grid">
-                    <label class="field compact-field">
-                        <span>Provider</span>
-                        <select id="providerSelect" aria-label="Provider">
-                            <option value="auto">Auto</option>
-                            <option value="gemini">Gemini</option>
-                            <option value="ollama">Ollama</option>
-                        </select>
-                    </label>
-
-                    <label class="field compact-field">
-                        <span>Company style</span>
-                        <select id="companyStyleSelect" aria-label="Company style">
-                            <option value="neutral" selected>Neutral</option>
-                            <option value="google">Google-style</option>
-                            <option value="startup">Startup-style</option>
-                            <option value="faang">FAANG-style</option>
-                        </select>
-                    </label>
-
-                    <label class="field compact-field">
-                        <span>Language</span>
-                        <select id="languageSelect" aria-label="Language">
-                            <option value="English" selected>English</option>
-                            <option value="Bangla">Bangla</option>
-                        </select>
-                    </label>
-
-                    <div class="advanced-actions">
-                        <button id="restartBtn" class="secondary-button" type="button">Restart Same Role</button>
-                        <button id="resumeBtn" class="ghost-button" type="button">Resume Last Session</button>
-                        <button id="openHistoryBtn" class="ghost-button" type="button">Saved Sessions</button>
-                    </div>
-                </div>
-            </details>
-        </section>
-
-        <main class="stage-shell">
-            <header class="stage-header">
-                <div class="stage-copy">
-                    <p class="eyebrow">Interview Workspace</p>
-                    <h2 id="role-display">AI Engineer Interview</h2>
-                    <p id="session-copy" class="session-copy">
-                        Set a role, press start, answer each question, and review the coaching in one focused workspace.
-                    </p>
-                </div>
-
-                <div class="stage-badges">
-                    <span id="providerBadge" class="subtle-pill">Auto</span>
-                    <span id="statusBadge" class="status-badge idle">Idle</span>
-                </div>
-            </header>
-
-            <section class="session-overview">
-                <div class="progress-panel">
-                    <div class="overview-head">
-                        <div>
-                            <p class="panel-label">Progress</p>
-                            <strong id="question-progress-text">0 / 4</strong>
-                        </div>
-                        <span id="currentLabelPill" class="subtle-pill">Waiting</span>
-                    </div>
-                    <div id="progressSteps" class="step-track" aria-label="Interview progress"></div>
-                </div>
-
-                <div class="stat-row">
-                    <div class="stat-pill">
-                        <span class="panel-label">Coach Notes</span>
-                        <strong id="feedback-count">0</strong>
-                    </div>
-                    <div class="stat-pill">
-                        <span class="panel-label">Turns</span>
-                        <strong id="message-count">0</strong>
-                    </div>
-                    <div class="stat-pill">
-                        <span class="panel-label">Avg Score</span>
-                        <strong id="average-score">0.0</strong>
-                    </div>
-                    <div class="stat-pill">
-                        <span class="panel-label">Session</span>
-                        <strong id="session-id-value">-</strong>
-                    </div>
-                </div>
-            </section>
-
-            <section class="signal-strip">
-                <div class="signal-card">
-                    <div class="signal-head">
-                        <p class="panel-label">Live strengths</p>
-                        <strong>What is going well</strong>
-                    </div>
-                    <ul id="strengthList" class="insight-list">
-                        <li>No feedback yet.</li>
-                    </ul>
-                </div>
-
-                <div class="signal-card">
-                    <div class="signal-head">
-                        <p class="panel-label">Weak areas</p>
-                        <strong>What to improve next</strong>
-                    </div>
-                    <ul id="weaknessList" class="insight-list">
-                        <li>No feedback yet.</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="liveView" class="view is-active" aria-labelledby="role-display">
-                <section id="messages" class="messages" aria-live="polite">
-                    <div class="empty-state">
-                        <div class="empty-icon">+</div>
-                        <h3>Start a smarter interview</h3>
-                        <p>
-                            The conversation will stay front and center here. Try
-                            <button class="inline-example" type="button" data-role-example="Frontend Developer">Frontend Developer</button>
-                            or
-                            <button class="inline-example" type="button" data-role-example="Data Analyst">Data Analyst</button>.
-                        </p>
-                    </div>
-                </section>
-
-                <div id="typingIndicator" class="typing-indicator hidden" aria-hidden="true">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <p>Generating the next turn</p>
-                </div>
-            </section>
-
-            <section id="summaryView" class="view" aria-label="Session summary">
-                <div id="summaryEmpty" class="placeholder-card">
-                    <h3>No summary yet</h3>
-                    <p>Finish a session to see your final score, top improvements, and final recommendations.</p>
-                </div>
-
-                <div id="summaryContent" class="summary-grid hidden">
-                    <section class="summary-hero">
-                        <div>
-                            <p class="eyebrow">Final report</p>
-                            <h3 id="summaryReadiness">Session complete</h3>
-                            <p id="summaryClosing" class="summary-copy"></p>
-                        </div>
-                        <div class="score-ring">
-                            <span>Final score</span>
-                            <strong id="summaryScore">0</strong>
-                        </div>
-                    </section>
-
-                    <section class="summary-card">
-                        <h4>Strengths</h4>
-                        <ul id="summaryStrengths" class="summary-list"></ul>
-                    </section>
-
-                    <section class="summary-card">
-                        <h4>Weak Areas</h4>
-                        <ul id="summaryWeakAreas" class="summary-list"></ul>
-                    </section>
-
-                    <section class="summary-card">
-                        <h4>Top 3 Improvements</h4>
-                        <ul id="summaryImprovements" class="summary-list"></ul>
-                    </section>
-
-                    <section class="summary-card">
-                        <h4>Recommendations</h4>
-                        <ul id="summaryRecommendations" class="summary-list"></ul>
-                    </section>
-
-                    <section class="summary-card wide-card">
-                        <div class="summary-card-head">
-                            <h4>Session transcript</h4>
-                            <button id="copySummaryBtn" class="ghost-button compact-button" type="button">Copy Report</button>
-                        </div>
-                        <div id="summaryTranscript" class="summary-transcript"></div>
-                    </section>
-                </div>
-            </section>
-
-            <section id="historyView" class="view" aria-label="Saved sessions">
-                <div class="history-layout">
-                    <aside class="history-list-panel">
-                        <div class="summary-card-head">
-                            <div>
-                                <p class="eyebrow">Saved sessions</p>
-                                <h3>Previous interviews</h3>
-                            </div>
-                            <button id="refreshHistoryBtn" class="ghost-button compact-button" type="button">Refresh</button>
-                        </div>
-                        <div id="historyList" class="history-list">
-                            <div class="history-empty">Loading session history...</div>
-                        </div>
-                    </aside>
-
-                    <section class="history-detail-panel">
-                        <div id="historyDetailEmpty" class="placeholder-card">
-                            <h3>Select a saved session</h3>
-                            <p>Review past transcripts, summary reports, and resume any unfinished session from here.</p>
-                        </div>
-
-                        <div id="historyDetail" class="history-detail hidden"></div>
-                    </section>
-                </div>
-            </section>
-
-            <div id="systemCard" class="system-banner" role="status">
-                Set a role, choose the interview shape, and start when ready.
-            </div>
-
-            <footer class="composer">
-                <div class="composer-top">
-                    <div class="meta-chip">
-                        <span class="meta-label">Question timer</span>
-                        <strong id="questionTimer">00:00</strong>
-                    </div>
-                    <div class="meta-chip">
-                        <span class="meta-label">Characters</span>
-                        <strong><span id="charCount">0</span> / <span id="charMax">1200</span></strong>
-                    </div>
-                </div>
-                <label class="composer-label" for="msgInput">Your answer</label>
-                <div class="composer-row">
-                    <textarea id="msgInput" rows="4" placeholder="Your answer will unlock when the interviewer asks a question." disabled aria-label="Interview answer"></textarea>
-                    <button id="sendBtn" class="primary-button send-button" type="button">Send</button>
-                </div>
-            </footer>
-
-            <div id="sidebarBackdrop" class="sidebar-backdrop" tabindex="-1"></div>
-            <aside id="sidebarPanel" class="sidebar-panel" aria-hidden="true">
-                <div class="sidebar-panel-head">
-                    <div>
-                        <p class="eyebrow">Sidebar</p>
-                        <h3>Live details</h3>
-                    </div>
-                    <button id="sidebarCloseBtn" class="ghost-button compact-button" type="button" aria-label="Close sidebar">Close</button>
-                </div>
-                <div class="sidebar-content">
-                    <p class="sidebar-copy">
-                        Slide this panel in to keep the main interview flow clean and access quick session details.
-                    </p>
-                    <div class="sidebar-card">
-                        <p class="sidebar-label">Current role</p>
-                        <strong id="sidebarRole">AI Engineer</strong>
-                    </div>
-                    <div class="sidebar-card">
-                        <p class="sidebar-label">Provider</p>
-                        <strong id="sidebarProvider">Auto</strong>
-                    </div>
-                    <div class="sidebar-card">
-                        <p class="sidebar-label">Progress</p>
-                        <strong id="sidebarProgress">0 / 4</strong>
-                    </div>
-                    <div class="sidebar-card">
-                        <p class="sidebar-label">Status</p>
-                        <strong id="sidebarStatus">Idle</strong>
-                    </div>
-                </div>
-            </aside>
-        </main>
-    </div>
-
-    <script>
-        window.APP_CONFIG = {
-            maxQuestions: {{ max_questions|default(8) }},
-            answerMaxChars: 1200
-        };
-    </script>
-    <script src="/static/script.js"></script>
+      <form id="answerForm" class="answer-form">
+        <input
+          id="answerInput"
+          type="text"
+          placeholder="Wait for your turn..."
+          disabled
+        />
+        <button id="sendBtn" type="submit" disabled>Send</button>
+      </form>
+    </section>
+  </main>
 </body>
 </html>
